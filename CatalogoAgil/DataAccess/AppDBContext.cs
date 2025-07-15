@@ -12,8 +12,9 @@ public class AppDBContext : DbContext
     
     public DbSet<Product> Products { get; set; }
 
-    override protected void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        modelBuilder.GenerateSeed();
     }
 }
