@@ -1,0 +1,60 @@
+﻿# Build e binários
+bin/
+obj/
+out/
+
+# Rider (JetBrains)
+.idea/
+*.sln.iml
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Logs
+*.log
+
+# Arquivos gerados
+*.db
+*.db-shm
+*.db-wal
+
+# Configurações locais
+appsettings.Development.json
+appsettings.Local.json
+
+# Cache e histórico do NuGet
+*.nupkg
+*.snupkg
+packages/
+.nuget/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Diretórios de publicação
+publish/
+wwwroot/dist/
+dist/
+
+# Blazor WebAssembly artifacts (caso esteja usando)
+wwwroot/_framework/
+wwwroot/_content/
+
+# Secrets do .NET (usados com dotnet user-secrets)
+**/secrets.json
+
+# Arquivos do sistema operacional
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# Node/NPM (caso use JS ou CSS)
+node_modules/
+npm-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
