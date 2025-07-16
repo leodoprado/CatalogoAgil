@@ -1,4 +1,5 @@
 ﻿using CatalogoAgil.DataAccess;
+using CatalogoAgil.DataAccess.Entities;
 using CatalogoAgil.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,5 +28,32 @@ public class ProductService
                 ProductCategory = x.ProductCategory,
                 ProductStatus = x.ProductStatus
             }).ToListAsync();
+    }
+
+    public bool CreateNewProduct(ProductViewModel productViewModel)
+    {
+        try
+        {
+            Product product = new Product
+            {
+                ProductName = productViewModel.ProductName,
+                ProductDescription = productViewModel.ProductDescription,
+                ProductPrice = productViewModel.ProductPrice,
+                ProductQuantity = productViewModel.ProductQuantity,
+                ProductCategory = productViewModel.ProductCategory,
+                ProductStatus = productViewModel.ProductStatus
+            };
+            
+            dbContext.Products.Add(product);
+            
+            var result = dbContext.SaveChanges();
+            
+            return result > 0;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 }

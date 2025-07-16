@@ -1,0 +1,35 @@
+﻿@using CatalogoAgil.Services
+@using CatalogoAgil.ViewModels
+@inject ProductService
+@inject Snackbar Snackbar
+
+<EditForm Model="@productViewModel" OnValidSubmit="OnValidSubmit">
+    <RunDialog>
+        <DialogContent>
+            <DataAnnotationsValidator />
+            <MudGrid>
+                <MudItem xs="9">
+                    <MudTextField 
+                        Variant="Variant.Outlined" 
+                        ShrinkLabel
+                        @bind-value="@productViewModel.ProductName"
+                        For="() => productViewModel.ProductName"
+                        >
+                        
+                    </MudTextField>
+                </MudItem>
+            </MudGrid>
+        </DialogContent>
+    </RunDialog>
+</EditForm>
+
+@code
+{
+    public ProductViewModel productViewModel { get; set; } = new ProductViewModel();
+
+    private async Task OnValidSubmit(EditContext editContext)
+    {
+        
+    }
+}
+
