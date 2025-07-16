@@ -1,7 +1,119 @@
 ﻿@page "/"
 
+@using System.Threading
+@using CatalogoAgil.Services
+@using CatalogoAgil.ViewModels
+
+@inject ProductService ProductService
+
+@rendermode InteractiveServer
+
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<MudDataGrid @ref="dataGrid" T="ProductViewModel" ServerData="ServerReload" Filterable="false">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Catálogo Ágil</MudText>
+        <MudSpacer />
+        <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <Columns>
+        <PropertyColumn Property="x => x.ProductId" Title="Product Id" />
+        <PropertyColumn Property="x => x.ProductName" Title="Product Name" />
+        <PropertyColumn Property="x => x.ProductDescription" />
+        <PropertyColumn Property="x => x.ProductCategory"  />
+        <PropertyColumn Property="x => x.ProductQuantity"  />
+        <PropertyColumn Property="x => x.ProductPrice"  />
+        <PropertyColumn Property="x => x.ProductStatus"  />
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="ProductViewModel" />
+    </PagerContent>
+</MudDataGrid>
 
-Welcome to your new app.
+@code {
+    MudDataGrid<ProductViewModel> dataGrid;
+    string searchString = null;
+
+    /// <summary>
+    /// Here we simulate getting the paged, filtered and ordered data from the server
+    /// </summary>
+    private async Task<GridData<ProductViewModel>> ServerReload(GridState<ProductViewModel> state)
+    {
+        IEnumerable<ProductViewModel> data = await ProductService.GetAllProducts();
+        await Task.Delay(300);
+        data = data.Where(element =>
+        {
+            if(string.IsNullOrWhiteSpace(searchString))
+                return true;
+            if(element.ProductIdView.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+                return true;
+            if(element.ProductName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+                return true;
+            return false;
+        }).ToArray();
+        var totalItems = data.Count();
+
+        var sortDefinition = state.SortDefinitions.FirstOrDefault();
+        if(sortDefinition != null)
+        {
+            switch(sortDefinition.SortBy)
+            {
+                case nameof(ProductViewModel.ProductIdView):
+                    data = data.OrderByDirection(
+                        sortDefinition.Descending ? SortDirection.Descending : SortDirection.Ascending,
+                        o => o.ProductIdView
+                    );
+                    break;
+                case nameof(ProductViewModel.ProductName):
+                    data = data.OrderByDirection(
+                        sortDefinition.Descending ? SortDirection.Descending : SortDirection.Ascending,
+                        o => o.ProductName
+                    );
+                    break;
+                case nameof(ProductViewModel.ProductDescription):
+                    data = data.OrderByDirection(
+                        sortDefinition.Descending ? SortDirection.Descending : SortDirection.Ascending,
+                        o => o.ProductDescription
+                    );
+                    break;
+                case nameof(ProductViewModel.ProductCategory):
+                    data = data.OrderByDirection(
+                        sortDefinition.Descending ? SortDirection.Descending : SortDirection.Ascending,
+                        o => o.ProductCategory
+                    );
+                    break;
+                case nameof(ProductViewModel.ProductQuantity):
+                    data = data.OrderByDirection(
+                        sortDefinition.Descending ? SortDirection.Descending : SortDirection.Ascending,
+                        o => o.ProductQuantity
+                    );
+                    break;
+                case nameof(ProductViewModel.ProductPrice):
+                    data = data.OrderByDirection(
+                        sortDefinition.Descending ? SortDirection.Descending : SortDirection.Ascending,
+                        o => o.ProductPrice
+                    );
+                    break;
+                case nameof(ProductViewModel.ProductStatus):
+                    data = data.OrderByDirection(
+                        sortDefinition.Descending ? SortDirection.Descending : SortDirection.Ascending,
+                        o => o.ProductStatus
+                    );
+                    break;
+            }
+        }
+
+        var pagedData = data.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray();
+        return new GridData<ProductViewModel> {
+            TotalItems = totalItems,
+            Items = pagedData
+        };
+    }
+
+    private Task OnSearch(string text)
+    {
+        searchString = text;
+        return dataGrid.ReloadServerData();
+    }
+}
